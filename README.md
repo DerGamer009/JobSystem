@@ -1,11 +1,11 @@
 # JobSystem
 
 ## Beschreibung
-Das **JobSystem** ist ein Minecraft-Plugin, das eine GUI-basierte Jobverwaltung bietet. Spieler können mit dem Befehl `/jobs` eine grafische Benutzeroberfläche öffnen, um verschiedene Jobs auszuwählen oder ihre aktuellen Jobs zu verwalten.
+Das **JobSystem** ist ein Minecraft-Plugin, das eine GUI-basierte Jobverwaltung bietet. Spieler können mit dem Befehl `/jobs` eine grafische Benutzeroberfläche öffnen, um verschiedene Jobs auszuwählen oder ihre aktuellen Jobs zu verwalten. Seit Version **1.1** stehen zusätzliche Berufe zur Auswahl und das Menü umfasst nun zwei Reihen.
 
 ## Funktionen
 - **GUI-basiertes Job-System**: Die Benutzeroberfläche wird mit `/jobs` geöffnet.
-- **Verschiedene Jobs verfügbar**: Spieler können aus mehreren Berufen wählen.
+- **Verschiedene Jobs verfügbar**: Spieler können aus mehreren Berufen wählen, darunter seit Version 1.1 auch *Alchemist* und *Verzauberer*.
 - **Fortschrittsspeicherung**: Fortschritte werden gespeichert und können abgerufen werden.
 - **Belohnungen**: Spieler erhalten Belohnungen basierend auf ihrer Arbeit.
 - **Konfigurierbar**: Anpassbare GUI, Belohnungen und Jobbedingungen.
