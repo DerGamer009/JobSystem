@@ -30,12 +30,14 @@ public class JobListener implements Listener
     {
         Player player = event.getPlayer();
         UUID uuid = player.getUniqueId();
-        plugin.getPlayerJob(uuid);
+        String job = plugin.getPlayerJob(uuid);
+        player.sendMessage(ChatColor.GREEN + "Dein aktueller Job: " + job);
     }
 
     public void openJobGUI(Player player)
     {
-        Inventory jobmenu = Bukkit.createInventory(null, 9, "Wähle deinen Job");
+        // Two rows to have a little more space for additional jobs
+        Inventory jobmenu = Bukkit.createInventory(null, 18, "Wähle deinen Job");
 
         ItemStack miner = new ItemStack(Material.DIAMOND_PICKAXE);
         ItemMeta minerMeta = miner.getItemMeta();
@@ -62,17 +64,29 @@ public class JobListener implements Listener
         builderMeta.setDisplayName("Baumeister");
         builder.setItemMeta(builderMeta);
 
-        ItemStack hunter = new ItemStack(Material.BRICKS);
+        ItemStack hunter = new ItemStack(Material.BOW);
         ItemMeta hunterMeta = hunter.getItemMeta();
-        hunterMeta.setDisplayName("Baumeister");
-        builder.setItemMeta(hunterMeta);
+        hunterMeta.setDisplayName("Jäger");
+        hunter.setItemMeta(hunterMeta);
 
-        jobmenu.setItem(1, miner);
-        jobmenu.setItem(2, farmer);
-        jobmenu.setItem(3, lumberjack);
-        jobmenu.setItem(4, fisherman);
-        jobmenu.setItem(5, builder);
-        jobmenu.setItem(6, hunter);
+        ItemStack alchemist = new ItemStack(Material.BREWING_STAND);
+        ItemMeta alchemistMeta = alchemist.getItemMeta();
+        alchemistMeta.setDisplayName("Alchemist");
+        alchemist.setItemMeta(alchemistMeta);
+
+        ItemStack enchanter = new ItemStack(Material.ENCHANTING_TABLE);
+        ItemMeta enchanterMeta = enchanter.getItemMeta();
+        enchanterMeta.setDisplayName("Verzauberer");
+        enchanter.setItemMeta(enchanterMeta);
+
+        jobmenu.setItem(0, miner);
+        jobmenu.setItem(1, farmer);
+        jobmenu.setItem(2, lumberjack);
+        jobmenu.setItem(3, fisherman);
+        jobmenu.setItem(4, builder);
+        jobmenu.setItem(5, hunter);
+        jobmenu.setItem(6, alchemist);
+        jobmenu.setItem(7, enchanter);
 
         player.openInventory(jobmenu);
     }
@@ -90,7 +104,7 @@ public class JobListener implements Listener
             {
                 String job = clickedItem.getItemMeta().getDisplayName();
                 plugin.setPlayerJob(player.getUniqueId(), job);
-                player.sendMessage("Du hast den Job" + job + " gewählt");
+                player.sendMessage("Du hast den Job " + job + " gewählt.");
             }
         }
     }

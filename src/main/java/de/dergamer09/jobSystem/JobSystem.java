@@ -24,7 +24,7 @@ public final class JobSystem extends JavaPlugin
     public void onEnable()
     {
         saveDefaultConfig();
-        loadCnofigValues();
+        loadConfigValues();
         getLogger().info(prefix + " Plugin has been enabled!");
         Bukkit.getPluginManager().registerEvents(new JobListener(this), this);
         getCommand("jobs").setExecutor(new JobCommand(this));
@@ -43,7 +43,7 @@ public final class JobSystem extends JavaPlugin
         disconnectDatabase();
     }
 
-    private void  loadCnofigValues()
+    private void loadConfigValues()
     {
         FileConfiguration config = getConfig();
         prefix = config.getString("prefix", "[JobSystem]");
@@ -90,18 +90,31 @@ public final class JobSystem extends JavaPlugin
 
     public String getPlayerJob(UUID uuid)
     {
-        try {
+        // First try to return a cached value to avoid unnecessary database queries
+        if (playerJobs.containsKey(uuid))
+        {
+            return playerJobs.get(uuid);
+        }
+
+        try
+        {
             var statement = connection.prepareStatement("SELECT job FROM jobs WHERE uuid = ?");
             statement.setString(1, uuid.toString());
             var resultSet = statement.executeQuery();
             if (resultSet.next())
             {
-                return resultSet.getString("job");
+                String job = resultSet.getString("job");
+                playerJobs.put(uuid, job);
+                return job;
             }
-        } catch (SQLException e)
+        }
+        catch (SQLException e)
         {
             e.printStackTrace();
         }
+
+        // default when nothing was found
+        playerJobs.put(uuid, "Arbeitslos");
         return "Arbeitslos";
     }
 }

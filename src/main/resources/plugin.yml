@@ -1,5 +1,5 @@
 name: JobSystem
-version: '1.0-SNAPSHOT'
+version: '1.1-SNAPSHOT'
 author: DerGamer09
 main: de.dergamer09.jobSystem.JobSystem
 api-version: '1.21'
