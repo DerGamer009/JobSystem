@@ -9,13 +9,16 @@ import net.devvoxel.jobs.storage.JobStorageFactory;
 import net.devvoxel.jobs.storage.JobStorageType;
 import net.devvoxel.jobs.util.JobManager;
 import net.devvoxel.jobs.util.JobPlayerData;
+import net.devvoxel.jobs.util.JobProgressionManager;
 import net.devvoxel.jobs.util.VersionSupport;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.ChatColor;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 
 import java.io.File;
 import java.io.IOException;
@@ -29,8 +32,11 @@ public class JobSystemPlugin extends JavaPlugin {
     private JobConfig jobConfig;
     private JobMessageService messageService;
     private JobManager jobManager;
+    private JobProgressionManager progressionManager;
     private JobStorage storage;
     private final Map<UUID, JobPlayerData> localCache = new ConcurrentHashMap<>();
+    private Economy economy;
+    private boolean warnedEconomyMissing;
 
     @Override
     public void onEnable() {
@@ -46,6 +52,7 @@ public class JobSystemPlugin extends JavaPlugin {
         saveResource("messages_de.yml", false);
         saveResource("jobs.yml", false);
 
+        setupEconomy();
         reloadServices();
 
         if (storage != null) {
@@ -64,13 +71,39 @@ public class JobSystemPlugin extends JavaPlugin {
     }
 
     public void reloadServices() {
+        setupEconomy();
         reloadConfig();
         this.jobConfig = new JobConfig(getConfig());
         this.messageService = new JobMessageService(this, jobConfig.getDefaultLanguage());
         this.jobManager = new JobManager(this, jobConfig);
+        this.progressionManager = new JobProgressionManager(this, jobConfig.getProgressionSettings());
         this.localCache.clear();
 
         setupStorage();
+        warnEconomyIfMissing();
+    }
+
+    private void setupEconomy() {
+        if (getServer().getPluginManager().getPlugin("Vault") == null) {
+            this.economy = null;
+            return;
+        }
+        RegisteredServiceProvider<Economy> registration = getServer().getServicesManager().getRegistration(Economy.class);
+        if (registration != null) {
+            this.economy = registration.getProvider();
+            this.warnedEconomyMissing = false;
+        } else {
+            this.economy = null;
+        }
+    }
+
+    private void warnEconomyIfMissing() {
+        if (economy != null || messageService == null || warnedEconomyMissing) {
+            return;
+        }
+        String message = messageService.formatWithoutPrefix("economy-missing", Map.of());
+        getLogger().warning(ChatColor.stripColor(message));
+        warnedEconomyMissing = true;
     }
 
     private void setupStorage() {
@@ -121,8 +154,16 @@ public class JobSystemPlugin extends JavaPlugin {
         return jobManager;
     }
 
+    public JobProgressionManager getProgressionManager() {
+        return progressionManager;
+    }
+
     public JobStorage getStorage() {
         return storage;
+    }
+
+    public Economy getEconomy() {
+        return economy;
     }
 
     public boolean isStorageAvailable() {

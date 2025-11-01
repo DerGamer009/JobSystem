@@ -52,3 +52,11 @@ action-feedback:
   volume: 0.5
   pitch: 1.5
 
+# progression: Configure how much experience is required per level and how
+# progress bars should be rendered. Set max-level to 0 to disable the cap.
+progression:
+  base-xp: 100.0
+  xp-increment: 50.0
+  max-level: 50
+  progress-bar-length: 20
+

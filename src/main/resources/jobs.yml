@@ -4,28 +4,40 @@ jobs:
     description: "&7Break stone and ores to earn rewards."
     permission: "net.devvoxel.jobs.miner"
     icon: "IRON_PICKAXE"
+    xp-per-action: 20
+    money-per-action: 15.0
   lumberjack:
     display-name: "&2Lumberjack"
     description: "&7Chop trees and gather logs."
     permission: "net.devvoxel.jobs.lumberjack"
     icon: "IRON_AXE"
+    xp-per-action: 15
+    money-per-action: 12.5
   farmer:
     display-name: "&6Farmer"
     description: "&7Harvest and replant crops."
     permission: "net.devvoxel.jobs.farmer"
     icon: "IRON_HOE"
+    xp-per-action: 18
+    money-per-action: 10.0
   hunter:
     display-name: "&cHunter"
     description: "&7Hunt mobs and earn bounties."
     permission: "net.devvoxel.jobs.hunter"
     icon: "BOW"
+    xp-per-action: 25
+    money-per-action: 20.0
   fisherman:
     display-name: "&9Fisherman"
     description: "&7Catch fish in rivers and seas."
     permission: "net.devvoxel.jobs.fisherman"
     icon: "FISHING_ROD"
+    xp-per-action: 16
+    money-per-action: 11.0
   digger:
     display-name: "&eDigger"
     description: "&7Dig soil, sand, and gravel."
     permission: "net.devvoxel.jobs.digger"
     icon: "IRON_SHOVEL"
+    xp-per-action: 14
+    money-per-action: 9.5

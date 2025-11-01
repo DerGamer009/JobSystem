@@ -49,7 +49,10 @@ public class MongoJobStorage implements JobStorage {
     public JobPlayerData loadPlayer(UUID uuid) {
         Document document = collection.find(Filters.eq("uuid", uuid.toString())).first();
         if (document != null) {
-            return new JobPlayerData(uuid, document.getString("job_id"));
+            int level = document.getInteger("job_level", 1);
+            Number experienceNumber = document.get("job_experience", Number.class);
+            double experience = experienceNumber == null ? 0.0 : experienceNumber.doubleValue();
+            return new JobPlayerData(uuid, document.getString("job_id"), level, experience);
         }
         return new JobPlayerData(uuid, null);
     }
@@ -57,7 +60,9 @@ public class MongoJobStorage implements JobStorage {
     @Override
     public void savePlayer(JobPlayerData data) {
         Document document = new Document("uuid", data.getUuid().toString())
-                .append("job_id", data.getJobId());
+                .append("job_id", data.getJobId())
+                .append("job_level", data.getLevel())
+                .append("job_experience", data.getExperience());
         collection.replaceOne(Filters.eq("uuid", data.getUuid().toString()), document, new ReplaceOptions().upsert(true));
     }
 

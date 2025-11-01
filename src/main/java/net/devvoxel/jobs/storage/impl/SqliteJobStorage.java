@@ -32,7 +32,15 @@ public class SqliteJobStorage implements JobStorage {
         }
         this.connection = DriverManager.getConnection("jdbc:sqlite:" + databaseFile.getAbsolutePath());
         try (Statement statement = connection.createStatement()) {
-            statement.executeUpdate("CREATE TABLE IF NOT EXISTS jobs_players (uuid TEXT PRIMARY KEY, job_id TEXT)");
+            statement.executeUpdate("CREATE TABLE IF NOT EXISTS jobs_players (uuid TEXT PRIMARY KEY, job_id TEXT, job_level INTEGER NOT NULL DEFAULT 1, job_experience REAL NOT NULL DEFAULT 0)");
+            try {
+                statement.executeUpdate("ALTER TABLE jobs_players ADD COLUMN job_level INTEGER NOT NULL DEFAULT 1");
+            } catch (SQLException ignored) {
+            }
+            try {
+                statement.executeUpdate("ALTER TABLE jobs_players ADD COLUMN job_experience REAL NOT NULL DEFAULT 0");
+            } catch (SQLException ignored) {
+            }
         }
     }
 
@@ -48,12 +56,17 @@ public class SqliteJobStorage implements JobStorage {
 
     @Override
     public JobPlayerData loadPlayer(UUID uuid) {
-        String sql = "SELECT job_id FROM jobs_players WHERE uuid = ?";
+        String sql = "SELECT job_id, job_level, job_experience FROM jobs_players WHERE uuid = ?";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, uuid.toString());
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new JobPlayerData(uuid, resultSet.getString("job_id"));
+                    return new JobPlayerData(
+                            uuid,
+                            resultSet.getString("job_id"),
+                            resultSet.getInt("job_level"),
+                            resultSet.getDouble("job_experience")
+                    );
                 }
             }
         } catch (SQLException exception) {
@@ -64,7 +77,7 @@ public class SqliteJobStorage implements JobStorage {
 
     @Override
     public void savePlayer(JobPlayerData data) {
-        String sql = "REPLACE INTO jobs_players(uuid, job_id) VALUES(?, ?)";
+        String sql = "REPLACE INTO jobs_players(uuid, job_id, job_level, job_experience) VALUES(?, ?, ?, ?)";
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, data.getUuid().toString());
             if (data.getJobId() == null) {
@@ -72,6 +85,8 @@ public class SqliteJobStorage implements JobStorage {
             } else {
                 statement.setString(2, data.getJobId());
             }
+            statement.setInt(3, data.getLevel());
+            statement.setDouble(4, data.getExperience());
             statement.executeUpdate();
         } catch (SQLException exception) {
             plugin.getLogger().severe("Failed to save job data for " + data.getUuid() + ": " + exception.getMessage());

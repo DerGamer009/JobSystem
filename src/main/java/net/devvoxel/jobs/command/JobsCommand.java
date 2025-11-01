@@ -99,6 +99,7 @@ public class JobsCommand implements TabExecutor {
             return;
         }
         data.setJobId(jobId);
+        data.resetProgress();
         plugin.savePlayerData(data);
         sender.sendMessage(messageService.format("job-joined", Map.of("job_name", ChatColor.stripColor(jobDefinition.getDisplayName()))));
         if (!plugin.isStorageAvailable()) {
@@ -141,7 +142,7 @@ public class JobsCommand implements TabExecutor {
         }
         String displayName = ChatColor.translateAlternateColorCodes('&', args[2].replace('_', ' '));
         String permission = args[3];
-        JobDefinition definition = new JobDefinition(id, displayName, "", permission, org.bukkit.Material.PAPER);
+        JobDefinition definition = new JobDefinition(id, displayName, "", permission, org.bukkit.Material.PAPER, 10.0, 0.0);
         if (manager.addJob(definition)) {
             sender.sendMessage(messageService.format("job-created", Map.of("job_id", id)));
         }
@@ -178,6 +179,26 @@ public class JobsCommand implements TabExecutor {
                 org.bukkit.Material icon = org.bukkit.Material.matchMaterial(value.toUpperCase());
                 if (icon != null) {
                     definition.setIcon(icon);
+                }
+                break;
+            case "xp":
+            case "xp-per-action":
+                try {
+                    double xp = Double.parseDouble(value);
+                    definition.setExperiencePerAction(xp);
+                } catch (NumberFormatException exception) {
+                    sender.sendMessage(messageService.format("invalid-number"));
+                    return;
+                }
+                break;
+            case "money":
+            case "money-per-action":
+                try {
+                    double money = Double.parseDouble(value);
+                    definition.setMoneyPerAction(money);
+                } catch (NumberFormatException exception) {
+                    sender.sendMessage(messageService.format("invalid-number"));
+                    return;
                 }
                 break;
             default:
@@ -237,7 +258,7 @@ public class JobsCommand implements TabExecutor {
                     .collect(Collectors.toList());
         }
         if (args.length == 3 && args[0].equalsIgnoreCase("edit")) {
-            return Arrays.asList("displayName", "description", "permission", "icon").stream()
+            return Arrays.asList("displayName", "description", "permission", "icon", "xp", "xp-per-action", "money", "money-per-action").stream()
                     .filter(s -> s.toLowerCase().startsWith(args[2].toLowerCase()))
                     .collect(Collectors.toList());
         }

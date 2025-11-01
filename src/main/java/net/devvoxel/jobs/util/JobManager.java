@@ -43,7 +43,10 @@ public class JobManager {
                     permission = configuredPermissions.getOrDefault(id.toLowerCase(), "net.devvoxel.jobs." + id.toLowerCase());
                 }
                 Material icon = Material.matchMaterial(section.getString("icon", "PAPER"));
-                JobDefinition jobDefinition = new JobDefinition(id, displayName, description, permission, icon);
+                double experiencePerAction = section.getDouble("xp-per-action", 10.0);
+                double moneyPerAction = section.getDouble("money-per-action", 0.0);
+                JobDefinition jobDefinition = new JobDefinition(id, displayName, description, permission, icon,
+                        experiencePerAction, moneyPerAction);
                 jobs.put(id.toLowerCase(), jobDefinition);
             }
         }
@@ -89,6 +92,8 @@ public class JobManager {
             config.set(base + ".description", definition.getDescription());
             config.set(base + ".permission", definition.getPermission());
             config.set(base + ".icon", definition.getIcon().name());
+            config.set(base + ".xp-per-action", definition.getExperiencePerAction());
+            config.set(base + ".money-per-action", definition.getMoneyPerAction());
         }
         try {
             plugin.saveJobsFile(config);

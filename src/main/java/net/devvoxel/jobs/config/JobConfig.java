@@ -62,4 +62,13 @@ public class JobConfig {
                 (float) config.getDouble("action-feedback.pitch", 1.5)
         );
     }
+
+    public ProgressionSettings getProgressionSettings() {
+        return new ProgressionSettings(
+                config.getDouble("progression.base-xp", 100.0),
+                config.getDouble("progression.xp-increment", 50.0),
+                config.getInt("progression.max-level", 50),
+                config.getInt("progression.progress-bar-length", 20)
+        );
+    }
 }

@@ -3,8 +3,10 @@ package net.devvoxel.jobs.gui;
 import net.devvoxel.jobs.JobSystemPlugin;
 import net.devvoxel.jobs.config.GuiSettings;
 import net.devvoxel.jobs.config.JobMessageService;
+import net.devvoxel.jobs.config.ProgressionSettings;
 import net.devvoxel.jobs.util.JobDefinition;
 import net.devvoxel.jobs.util.JobPlayerData;
+import net.devvoxel.jobs.util.JobProgressionManager;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -87,6 +89,9 @@ public class JobMenu implements Listener {
 
     private void populateJobs() {
         int slot = 10;
+        JobPlayerData playerData = plugin.getPlayerData(player.getUniqueId());
+        JobProgressionManager progressionManager = plugin.getProgressionManager();
+        ProgressionSettings progressionSettings = plugin.getJobConfig().getProgressionSettings();
         for (JobDefinition job : plugin.getJobManager().getJobs()) {
             if (slot >= inventory.getSize()) {
                 break;
@@ -99,7 +104,36 @@ public class JobMenu implements Listener {
                 List<String> lore = new ArrayList<>();
                 lore.add(ChatColor.translateAlternateColorCodes('&', job.getDescription()));
                 lore.add(" ");
-                lore.add(ChatColor.GRAY + "Permission: " + ChatColor.WHITE + job.getPermission());
+                lore.add(messageService.formatWithoutPrefix("menu-permission", Map.of("permission", job.getPermission())));
+                lore.add(messageService.formatWithoutPrefix("menu-reward", Map.of(
+                        "money_formatted", progressionManager.formatMoney(job.getMoneyPerAction()),
+                        "xp", progressionManager.formatExperience(job.getExperiencePerAction())
+                )));
+
+                boolean isCurrentJob = playerData.getJobId() != null && playerData.getJobId().equalsIgnoreCase(job.getId());
+                if (isCurrentJob) {
+                    lore.add(" ");
+                    lore.add(messageService.formatWithoutPrefix("menu-current-level", Map.of(
+                            "level", String.valueOf(playerData.getLevel())
+                    )));
+                    if (progressionSettings.hasMaxLevel() && playerData.getLevel() >= progressionSettings.getMaxLevel()) {
+                        String bar = progressionManager.createProgressBar(1.0);
+                        lore.add(messageService.formatWithoutPrefix("menu-progress", Map.of("progress_bar", bar)));
+                        lore.add(messageService.formatWithoutPrefix("menu-progress-max", Map.of()));
+                    } else {
+                        double required = progressionSettings.getRequiredExperienceForLevel(playerData.getLevel());
+                        double progress = required <= 0 ? 0.0 : Math.min(1.0, playerData.getExperience() / required);
+                        String bar = progressionManager.createProgressBar(progress);
+                        lore.add(messageService.formatWithoutPrefix("menu-progress", Map.of("progress_bar", bar)));
+                        lore.add(messageService.formatWithoutPrefix("menu-progress-values", Map.of(
+                                "xp_current", progressionManager.formatExperience(playerData.getExperience()),
+                                "xp_required", progressionManager.formatExperience(required)
+                        )));
+                    }
+                } else {
+                    lore.add(" ");
+                    lore.add(messageService.formatWithoutPrefix("menu-select-hint", Map.of()));
+                }
                 meta.setLore(lore);
                 itemStack.setItemMeta(meta);
             }
@@ -196,6 +230,7 @@ public class JobMenu implements Listener {
         }
         JobPlayerData data = plugin.getPlayerData(player.getUniqueId());
         data.setJobId(jobId);
+        data.resetProgress();
         plugin.savePlayerData(data);
         player.sendMessage(messages.format("job-joined", Map.of("job_name", ChatColor.stripColor(definition.getDisplayName()))));
         playSelectSound(player);
