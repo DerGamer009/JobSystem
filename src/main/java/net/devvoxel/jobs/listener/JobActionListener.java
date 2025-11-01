@@ -10,7 +10,7 @@ import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.Tag;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -107,7 +107,7 @@ public class JobActionListener implements Listener {
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onEntityKill(EntityDeathEvent event) {
-        Entity entity = event.getEntity();
+        LivingEntity entity = event.getEntity();
         Player killer = entity.getKiller();
         if (killer == null) {
             return;
