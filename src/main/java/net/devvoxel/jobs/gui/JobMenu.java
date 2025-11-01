@@ -104,8 +104,8 @@ public class JobMenu implements Listener {
                 List<String> lore = new ArrayList<>();
                 lore.add(ChatColor.translateAlternateColorCodes('&', job.getDescription()));
                 lore.add(" ");
-                lore.add(messageService.formatWithoutPrefix("menu-permission", Map.of("permission", job.getPermission())));
-                lore.add(messageService.formatWithoutPrefix("menu-reward", Map.of(
+                lore.add(messages.formatWithoutPrefix("menu-permission", Map.of("permission", job.getPermission())));
+                lore.add(messages.formatWithoutPrefix("menu-reward", Map.of(
                         "money_formatted", progressionManager.formatMoney(job.getMoneyPerAction()),
                         "xp", progressionManager.formatExperience(job.getExperiencePerAction())
                 )));
@@ -113,26 +113,26 @@ public class JobMenu implements Listener {
                 boolean isCurrentJob = playerData.getJobId() != null && playerData.getJobId().equalsIgnoreCase(job.getId());
                 if (isCurrentJob) {
                     lore.add(" ");
-                    lore.add(messageService.formatWithoutPrefix("menu-current-level", Map.of(
+                    lore.add(messages.formatWithoutPrefix("menu-current-level", Map.of(
                             "level", String.valueOf(playerData.getLevel())
                     )));
                     if (progressionSettings.hasMaxLevel() && playerData.getLevel() >= progressionSettings.getMaxLevel()) {
                         String bar = progressionManager.createProgressBar(1.0);
-                        lore.add(messageService.formatWithoutPrefix("menu-progress", Map.of("progress_bar", bar)));
-                        lore.add(messageService.formatWithoutPrefix("menu-progress-max", Map.of()));
+                        lore.add(messages.formatWithoutPrefix("menu-progress", Map.of("progress_bar", bar)));
+                        lore.add(messages.formatWithoutPrefix("menu-progress-max", Map.of()));
                     } else {
                         double required = progressionSettings.getRequiredExperienceForLevel(playerData.getLevel());
                         double progress = required <= 0 ? 0.0 : Math.min(1.0, playerData.getExperience() / required);
                         String bar = progressionManager.createProgressBar(progress);
-                        lore.add(messageService.formatWithoutPrefix("menu-progress", Map.of("progress_bar", bar)));
-                        lore.add(messageService.formatWithoutPrefix("menu-progress-values", Map.of(
+                        lore.add(messages.formatWithoutPrefix("menu-progress", Map.of("progress_bar", bar)));
+                        lore.add(messages.formatWithoutPrefix("menu-progress-values", Map.of(
                                 "xp_current", progressionManager.formatExperience(playerData.getExperience()),
                                 "xp_required", progressionManager.formatExperience(required)
                         )));
                     }
                 } else {
                     lore.add(" ");
-                    lore.add(messageService.formatWithoutPrefix("menu-select-hint", Map.of()));
+                    lore.add(messages.formatWithoutPrefix("menu-select-hint", Map.of()));
                 }
                 meta.setLore(lore);
                 itemStack.setItemMeta(meta);
