@@ -6,21 +6,23 @@ import net.devvoxel.jobs.config.JobMessageService;
 import net.devvoxel.jobs.util.JobDefinition;
 import net.devvoxel.jobs.util.JobPlayerData;
 import net.devvoxel.jobs.util.JobProgressResult;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
-import org.bukkit.block.Block;
 import org.bukkit.Tag;
+import org.bukkit.block.Block;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerFishEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Map;
@@ -189,7 +191,8 @@ public class JobActionListener implements Listener {
             placeholders.put("xp_required", plugin.getProgressionManager().formatExperience(result.requiredExperience()));
         }
 
-        player.sendMessage(messages.format("action-feedback", placeholders));
+        String actionBarMessage = messages.formatWithoutPrefix("action-feedback", placeholders);
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(actionBarMessage));
         if (result.leveledUp()) {
             if (result.maxLevelReached()) {
                 player.sendMessage(messages.format("job-max-level", Map.of("job_name", ChatColor.stripColor(job.getDisplayName()))));
