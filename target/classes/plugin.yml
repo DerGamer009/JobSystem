@@ -1,0 +1,24 @@
+name: JobSystem
+main: net.devvoxel.jobs.JobSystemPlugin
+version: 1.0.0
+author: DevVoxel
+api-version: '1.20'
+depend: []
+commands:
+  jobs:
+    description: Open the job management GUI.
+    usage: /<command>
+    aliases: [job]
+permissions:
+  net.devvoxel.jobs.*:
+    description: Access to all job commands and jobs.
+    default: op
+    children:
+      net.devvoxel.jobs.command: true
+      net.devvoxel.jobs.manage: true
+  net.devvoxel.jobs.command:
+    description: Access to player job commands.
+    default: true
+  net.devvoxel.jobs.manage:
+    description: Allows managing jobs (create/edit/delete).
+    default: op
