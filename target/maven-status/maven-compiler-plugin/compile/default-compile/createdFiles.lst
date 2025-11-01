@@ -1,4 +1,5 @@
 net\devvoxel\jobs\util\JobPlayerData.class
+net\devvoxel\jobs\util\JobProgressResult.class
 net\devvoxel\jobs\command\JobsCommand.class
 net\devvoxel\jobs\config\JobConfig.class
 net\devvoxel\jobs\storage\JobStorageFactory$1.class
@@ -9,10 +10,12 @@ net\devvoxel\jobs\config\ActionFeedbackSettings.class
 net\devvoxel\jobs\storage\JobStorage.class
 net\devvoxel\jobs\storage\impl\MysqlJobStorage.class
 net\devvoxel\jobs\util\JobManager.class
+net\devvoxel\jobs\util\JobProgressionManager.class
 net\devvoxel\jobs\JobSystemPlugin.class
 net\devvoxel\jobs\gui\JobMenu.class
 net\devvoxel\jobs\storage\impl\MongoJobStorage.class
 net\devvoxel\jobs\util\VersionSupport.class
+net\devvoxel\jobs\config\ProgressionSettings.class
 net\devvoxel\jobs\util\JobDefinition.class
 net\devvoxel\jobs\config\GuiSettings.class
 net\devvoxel\jobs\storage\JobStorageFactory.class

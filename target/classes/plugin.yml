@@ -4,6 +4,8 @@ version: 1.0.0
 author: DevVoxel
 api-version: '1.20'
 depend: []
+softdepend:
+  - Vault
 commands:
   jobs:
     description: Open the job management GUI.

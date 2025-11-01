@@ -3,6 +3,7 @@ C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\config
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\config\GuiSettings.java
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\config\JobConfig.java
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\config\JobMessageService.java
+C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\config\ProgressionSettings.java
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\config\StorageSettings.java
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\gui\JobMenu.java
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\JobSystemPlugin.java
@@ -16,4 +17,6 @@ C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\storag
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\util\JobDefinition.java
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\util\JobManager.java
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\util\JobPlayerData.java
+C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\util\JobProgressionManager.java
+C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\util\JobProgressResult.java
 C:\Users\jager\Documents\GitHub\JobSystem\src\main\java\net\devvoxel\jobs\util\VersionSupport.java
