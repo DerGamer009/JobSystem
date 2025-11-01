@@ -1,0 +1,31 @@
+jobs:
+  miner:
+    display-name: "&bMiner"
+    description: "&7Break stone and ores to earn rewards."
+    permission: "net.devvoxel.jobs.miner"
+    icon: "IRON_PICKAXE"
+  lumberjack:
+    display-name: "&2Lumberjack"
+    description: "&7Chop trees and gather logs."
+    permission: "net.devvoxel.jobs.lumberjack"
+    icon: "IRON_AXE"
+  farmer:
+    display-name: "&6Farmer"
+    description: "&7Harvest and replant crops."
+    permission: "net.devvoxel.jobs.farmer"
+    icon: "IRON_HOE"
+  hunter:
+    display-name: "&cHunter"
+    description: "&7Hunt mobs and earn bounties."
+    permission: "net.devvoxel.jobs.hunter"
+    icon: "BOW"
+  fisherman:
+    display-name: "&9Fisherman"
+    description: "&7Catch fish in rivers and seas."
+    permission: "net.devvoxel.jobs.fisherman"
+    icon: "FISHING_ROD"
+  digger:
+    display-name: "&eDigger"
+    description: "&7Dig soil, sand, and gravel."
+    permission: "net.devvoxel.jobs.digger"
+    icon: "IRON_SHOVEL"
