@@ -5,6 +5,7 @@ import net.devvoxel.jobs.config.ActionFeedbackSettings;
 import net.devvoxel.jobs.config.JobMessageService;
 import net.devvoxel.jobs.util.JobDefinition;
 import net.devvoxel.jobs.util.JobPlayerData;
+import net.devvoxel.jobs.util.JobProgressResult;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -161,13 +162,45 @@ public class JobActionListener implements Listener {
     }
 
     private void sendFeedback(Player player, JobDefinition job) {
+        JobProgressResult result = plugin.getProgressionManager().reward(player, job);
+        if (result == null) {
+            return;
+        }
+
         long now = System.currentTimeMillis();
         Long last = cooldowns.get(player.getUniqueId());
         if (last != null && now - last < FEEDBACK_COOLDOWN_MS) {
             return;
         }
         cooldowns.put(player.getUniqueId(), now);
-        player.sendMessage(messages.format("action-feedback", Map.of("job_name", ChatColor.stripColor(job.getDisplayName()))));
+
+        Map<String, String> placeholders = new java.util.HashMap<>();
+        placeholders.put("job_name", ChatColor.stripColor(job.getDisplayName()));
+        placeholders.put("money_formatted", plugin.getProgressionManager().formatMoney(result.moneyAwarded()));
+        placeholders.put("xp", plugin.getProgressionManager().formatExperience(result.experienceAwarded()));
+        placeholders.put("level", String.valueOf(result.newLevel()));
+        placeholders.put("progress_bar", plugin.getProgressionManager().createProgressBar(result.progressFraction()));
+        if (result.maxLevelReached()) {
+            String maxLabel = messages.getMessage("progress-max-label");
+            placeholders.put("xp_current", maxLabel);
+            placeholders.put("xp_required", maxLabel);
+        } else {
+            placeholders.put("xp_current", plugin.getProgressionManager().formatExperience(result.currentExperience()));
+            placeholders.put("xp_required", plugin.getProgressionManager().formatExperience(result.requiredExperience()));
+        }
+
+        player.sendMessage(messages.format("action-feedback", placeholders));
+        if (result.leveledUp()) {
+            if (result.maxLevelReached()) {
+                player.sendMessage(messages.format("job-max-level", Map.of("job_name", ChatColor.stripColor(job.getDisplayName()))));
+            } else {
+                player.sendMessage(messages.format("job-level-up", Map.of(
+                        "job_name", ChatColor.stripColor(job.getDisplayName()),
+                        "level", String.valueOf(result.newLevel())
+                )));
+            }
+        }
+
         if (feedbackSettings.isEnabled()) {
             try {
                 Sound sound = Sound.valueOf(feedbackSettings.getSound());

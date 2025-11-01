@@ -39,8 +39,18 @@ public class MysqlJobStorage implements JobStorage {
         this.dataSource = new HikariDataSource(config);
 
         try (Connection connection = dataSource.getConnection();
-             PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS jobs_players (uuid VARCHAR(36) PRIMARY KEY, job_id VARCHAR(64))")) {
+             PreparedStatement statement = connection.prepareStatement("CREATE TABLE IF NOT EXISTS jobs_players (uuid VARCHAR(36) PRIMARY KEY, job_id VARCHAR(64), job_level INT NOT NULL DEFAULT 1, job_experience DOUBLE NOT NULL DEFAULT 0)")) {
             statement.executeUpdate();
+        }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement addLevel = connection.prepareStatement("ALTER TABLE jobs_players ADD COLUMN job_level INT NOT NULL DEFAULT 1")) {
+            addLevel.executeUpdate();
+        } catch (SQLException ignored) {
+        }
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement addExperience = connection.prepareStatement("ALTER TABLE jobs_players ADD COLUMN job_experience DOUBLE NOT NULL DEFAULT 0")) {
+            addExperience.executeUpdate();
+        } catch (SQLException ignored) {
         }
     }
 
@@ -53,13 +63,18 @@ public class MysqlJobStorage implements JobStorage {
 
     @Override
     public JobPlayerData loadPlayer(UUID uuid) {
-        String sql = "SELECT job_id FROM jobs_players WHERE uuid = ?";
+        String sql = "SELECT job_id, job_level, job_experience FROM jobs_players WHERE uuid = ?";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, uuid.toString());
             try (ResultSet resultSet = statement.executeQuery()) {
                 if (resultSet.next()) {
-                    return new JobPlayerData(uuid, resultSet.getString("job_id"));
+                    return new JobPlayerData(
+                            uuid,
+                            resultSet.getString("job_id"),
+                            resultSet.getInt("job_level"),
+                            resultSet.getDouble("job_experience")
+                    );
                 }
             }
         } catch (SQLException exception) {
@@ -70,7 +85,7 @@ public class MysqlJobStorage implements JobStorage {
 
     @Override
     public void savePlayer(JobPlayerData data) {
-        String sql = "REPLACE INTO jobs_players(uuid, job_id) VALUES(?, ?)";
+        String sql = "REPLACE INTO jobs_players(uuid, job_id, job_level, job_experience) VALUES(?, ?, ?, ?)";
         try (Connection connection = dataSource.getConnection();
              PreparedStatement statement = connection.prepareStatement(sql)) {
             statement.setString(1, data.getUuid().toString());
@@ -79,6 +94,8 @@ public class MysqlJobStorage implements JobStorage {
             } else {
                 statement.setString(2, data.getJobId());
             }
+            statement.setInt(3, data.getLevel());
+            statement.setDouble(4, data.getExperience());
             statement.executeUpdate();
         } catch (SQLException exception) {
             plugin.getLogger().severe("Failed to save job data for " + data.getUuid() + ": " + exception.getMessage());
