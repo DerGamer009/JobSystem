@@ -1,0 +1,54 @@
+# JobSystem Configuration
+# -----------------------
+# prefix: The prefix that will appear in front of all chat messages.
+prefix: "&8[&aJobSystem&8]&r "
+
+# default-language: Default language file to load (messages_en.yml or messages_de.yml).
+default-language: "en"
+
+# storage: Settings for the database backend that stores player job data.
+storage:
+  # Supported types: MYSQL, SQLITE, MONGODB
+  type: "SQLITE"
+
+  mysql:
+    host: "localhost"
+    port: 3306
+    database: "jobsystem"
+    username: "root"
+    password: "password"
+    pool-size: 10
+
+  sqlite:
+    # Database file name stored in the plugin data folder
+    file: "jobs.db"
+
+  mongodb:
+    connection-string: "mongodb://localhost:27017"
+    database: "jobsystem"
+    collection: "player_jobs"
+
+# permissions: Configure the permission nodes that will be granted per job.
+permissions:
+  miner: "net.devvoxel.jobs.miner"
+  lumberjack: "net.devvoxel.jobs.lumberjack"
+  farmer: "net.devvoxel.jobs.farmer"
+  hunter: "net.devvoxel.jobs.hunter"
+  fisherman: "net.devvoxel.jobs.fisherman"
+  digger: "net.devvoxel.jobs.digger"
+
+# gui: Options for the /jobs GUI appearance and animation timings.
+gui:
+  title: "&8Job &aAuswahl"
+  size: 45
+  open-animation-delay: 4
+  decorative-material: "GRAY_STAINED_GLASS_PANE"
+
+# action-feedback: Configure sounds and messages that play when a player performs
+# an action related to their job. Set enabled to false to disable this feature.
+action-feedback:
+  enabled: true
+  sound: "ENTITY_EXPERIENCE_ORB_PICKUP"
+  volume: 0.5
+  pitch: 1.5
+
