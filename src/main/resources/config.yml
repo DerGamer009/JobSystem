@@ -54,10 +54,22 @@ action-feedback:
 
 # progression: Configure how much experience is required per level and how
 # progress bars should be rendered. Set max-level to 0 to disable the cap.
+# XP-Berechnung: requiredXP = base-xp + (level - 1) * xp-increment
+# Beispiel mit base-xp: 100.0 und xp-increment: 50.0:
+#   Level 1 -> 2: 100.0 XP benötigt
+#   Level 2 -> 3: 150.0 XP benötigt (100 + 1*50)
+#   Level 3 -> 4: 200.0 XP benötigt (100 + 2*50)
+#   Level 4 -> 5: 250.0 XP benötigt (100 + 3*50)
+#   usw.
 progression:
+  # base-xp: Die Basis-XP, die für Level 1 benötigt wird
   base-xp: 100.0
+  # xp-increment: Wie viel zusätzliche XP pro Level benötigt wird
+  # Die Formel ist: base-xp + (level - 1) * xp-increment
   xp-increment: 50.0
+  # max-level: Maximale Level (0 = unbegrenzt)
   max-level: 50
+  # progress-bar-length: Länge der Fortschrittsleiste in Zeichen
   progress-bar-length: 20
 
 # auto-join: Automatically assign a job to players when they join the server.
