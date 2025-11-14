@@ -5,6 +5,7 @@ messages:
   job-not-found: "&cDiesen Job gibt es nicht."
   job-already-joined: "&cDu hast diesen Job bereits."
   job-joined: "&aDu hast den Job &f%job_name% &abekommen."
+  job-auto-joined: "&aDu wurdest automatisch dem Job &f%job_name% &azugeteilt."
   job-unjoined: "&aDu hast deinen Job verlassen."
   job-created: "&aJob &f%job_id% &awurde erstellt."
   job-exists: "&cEin Job mit dieser ID existiert bereits."

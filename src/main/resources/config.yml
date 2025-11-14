@@ -60,3 +60,14 @@ progression:
   max-level: 50
   progress-bar-length: 20
 
+# auto-join: Automatically assign a job to players when they join the server.
+# Set enabled to false to disable this feature.
+# When enabled, players will automatically join the first available job they have permission for.
+auto-join:
+  enabled: false
+
+# auto-leave: Automatically remove a player's job when they leave the server.
+# Set enabled to false to disable this feature.
+auto-leave:
+  enabled: false
+

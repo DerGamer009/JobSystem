@@ -33,6 +33,7 @@ public class JobSystemPlugin extends JavaPlugin {
     private JobMessageService messageService;
     private JobManager jobManager;
     private JobProgressionManager progressionManager;
+    private net.devvoxel.jobs.util.BlockXpManager blockXpManager;
     private JobStorage storage;
     private final Map<UUID, JobPlayerData> localCache = new ConcurrentHashMap<>();
     private Economy economy;
@@ -51,6 +52,7 @@ public class JobSystemPlugin extends JavaPlugin {
         saveResource("messages_en.yml", false);
         saveResource("messages_de.yml", false);
         saveResource("jobs.yml", false);
+        saveResource("blocks.yml", false);
 
         setupEconomy();
         reloadServices();
@@ -77,6 +79,7 @@ public class JobSystemPlugin extends JavaPlugin {
         this.messageService = new JobMessageService(this, jobConfig.getDefaultLanguage());
         this.jobManager = new JobManager(this, jobConfig);
         this.progressionManager = new JobProgressionManager(this, jobConfig.getProgressionSettings());
+        this.blockXpManager = new net.devvoxel.jobs.util.BlockXpManager(this);
         this.localCache.clear();
 
         setupStorage();
@@ -156,6 +159,10 @@ public class JobSystemPlugin extends JavaPlugin {
 
     public JobProgressionManager getProgressionManager() {
         return progressionManager;
+    }
+
+    public net.devvoxel.jobs.util.BlockXpManager getBlockXpManager() {
+        return blockXpManager;
     }
 
     public JobStorage getStorage() {

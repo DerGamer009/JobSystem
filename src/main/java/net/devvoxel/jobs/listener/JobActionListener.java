@@ -23,6 +23,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import java.util.Map;
@@ -71,9 +72,46 @@ public class JobActionListener implements Listener {
     );
 
     @EventHandler
+    public void onJoin(PlayerJoinEvent event) {
+        Player player = event.getPlayer();
+        if (plugin.getJobConfig().isAutoJoinEnabled()) {
+            JobPlayerData data = plugin.getPlayerData(player.getUniqueId());
+            // Nur automatisch joinen, wenn der Spieler noch kein Job hat
+            if (data.getJobId() == null || data.getJobId().isBlank()) {
+                // Durch alle verfügbaren Jobs iterieren und den ersten finden, für den der Spieler die Permission hat
+                for (JobDefinition jobDefinition : plugin.getJobManager().getJobs()) {
+                    // Prüfe Permission nur wenn vorhanden
+                    if (jobDefinition.getPermission() == null || 
+                        jobDefinition.getPermission().isBlank() || 
+                        player.hasPermission(jobDefinition.getPermission())) {
+                        data.setJobId(jobDefinition.getId());
+                        data.resetProgress();
+                        plugin.savePlayerData(data);
+                        String message = messages.format("job-auto-joined", 
+                            java.util.Map.of("job_name", 
+                                org.bukkit.ChatColor.stripColor(jobDefinition.getDisplayName())));
+                        player.sendMessage(message);
+                        break; // Nur den ersten verfügbaren Job zuweisen
+                    }
+                }
+            }
+        }
+    }
+
+    @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        cooldowns.remove(event.getPlayer().getUniqueId());
-        plugin.clearCachedPlayer(event.getPlayer().getUniqueId());
+        Player player = event.getPlayer();
+        cooldowns.remove(player.getUniqueId());
+        
+        if (plugin.getJobConfig().isAutoLeaveEnabled()) {
+            JobPlayerData data = plugin.getPlayerData(player.getUniqueId());
+            if (data.getJobId() != null && !data.getJobId().isBlank()) {
+                data.setJobId(null);
+                plugin.savePlayerData(data);
+            }
+        }
+        
+        plugin.clearCachedPlayer(player.getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -84,25 +122,28 @@ public class JobActionListener implements Listener {
             return;
         }
         Block block = event.getBlock();
+        Material blockType = block.getType();
+        Double blockXp = plugin.getBlockXpManager().getBlockXp(job.getId(), blockType);
+        
         switch (job.getId()) {
             case "miner":
-                if (isMinerBlock(block.getType())) {
-                    sendFeedback(player, job);
+                if (isMinerBlock(blockType)) {
+                    sendFeedback(player, job, blockXp);
                 }
                 break;
             case "lumberjack":
-                if (Tag.LOGS.isTagged(block.getType())) {
-                    sendFeedback(player, job);
+                if (Tag.LOGS.isTagged(blockType)) {
+                    sendFeedback(player, job, blockXp);
                 }
                 break;
             case "farmer":
-                if (isCrop(block.getType())) {
-                    sendFeedback(player, job);
+                if (isCrop(blockType)) {
+                    sendFeedback(player, job, blockXp);
                 }
                 break;
             case "digger":
-                if (isDirt(block.getType())) {
-                    sendFeedback(player, job);
+                if (isDirt(blockType)) {
+                    sendFeedback(player, job, blockXp);
                 }
                 break;
         }
@@ -164,7 +205,11 @@ public class JobActionListener implements Listener {
     }
 
     private void sendFeedback(Player player, JobDefinition job) {
-        JobProgressResult result = plugin.getProgressionManager().reward(player, job);
+        sendFeedback(player, job, null);
+    }
+
+    private void sendFeedback(Player player, JobDefinition job, Double customXp) {
+        JobProgressResult result = plugin.getProgressionManager().reward(player, job, customXp);
         if (result == null) {
             return;
         }

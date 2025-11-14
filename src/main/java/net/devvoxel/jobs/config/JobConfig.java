@@ -71,4 +71,12 @@ public class JobConfig {
                 config.getInt("progression.progress-bar-length", 20)
         );
     }
+
+    public boolean isAutoJoinEnabled() {
+        return config.getBoolean("auto-join.enabled", false);
+    }
+
+    public boolean isAutoLeaveEnabled() {
+        return config.getBoolean("auto-leave.enabled", false);
+    }
 }

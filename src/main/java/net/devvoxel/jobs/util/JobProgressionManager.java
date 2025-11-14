@@ -21,6 +21,10 @@ public class JobProgressionManager {
     }
 
     public JobProgressResult reward(Player player, JobDefinition jobDefinition) {
+        return reward(player, jobDefinition, null);
+    }
+
+    public JobProgressResult reward(Player player, JobDefinition jobDefinition, Double customXp) {
         JobPlayerData data = plugin.getPlayerData(player.getUniqueId());
         if (data.getJobId() == null || !data.getJobId().equalsIgnoreCase(jobDefinition.getId())) {
             return null;
@@ -32,7 +36,7 @@ public class JobProgressionManager {
         boolean leveledUp = false;
         boolean maxLevelReached = settings.hasMaxLevel() && level >= settings.getMaxLevel();
 
-        double experienceAwarded = jobDefinition.getExperiencePerAction();
+        double experienceAwarded = customXp != null ? customXp : jobDefinition.getExperiencePerAction();
         if (!maxLevelReached) {
             experience += experienceAwarded;
             double required = settings.getRequiredExperienceForLevel(level);
